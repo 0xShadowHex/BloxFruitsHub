@@ -12,10 +12,3 @@ function ForceDay()
         Lighting.ClockTime = 14
     end)
 end
-
-function StopForcingDay()
-    if ForceDayConnection then
-        ForceDayConnection:Disconnect()
-        ForceDayConnection = nil
-    end
-end
