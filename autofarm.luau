@@ -396,8 +396,12 @@ local function PickTarget()
     local myPos = hrp and hrp.Position or Vector3.new(0, 0, 0)
     if getgenv().QuestMob then
         local qm, qd = nil, 1e9
+        local skipJacket = string.lower(getgenv().QuestMob) == "prisoner"
         for _, e in ipairs(folder:GetChildren()) do
             if e:IsA("Model") and IsAlive(e) and string.lower(e.Name) == string.lower(getgenv().QuestMob) then
+                if skipJacket and e:FindFirstChild("Accessory (OrangeJacket)") then
+                    continue
+                end
                 local er = e:FindFirstChild("HumanoidRootPart")
                 local d = er and (er.Position - myPos).Magnitude or 1e9
                 if d < qd then qm, qd = e, d end
