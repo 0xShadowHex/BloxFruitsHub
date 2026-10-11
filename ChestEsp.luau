@@ -4,7 +4,7 @@ local RunService = game:GetService("RunService")
 local UserInputService = game:GetService("UserInputService")
 local LocalPlayer = Players.LocalPlayer
 local ESP_ENABLED = true
-local MAX_DISTANCE = 5000
+local MAX_DISTANCE = math.huge
 local function getChestInfo(objName)
     local lower = string.lower(objName)
     if string.find(lower, "chest3") or string.find(lower, "gold") then
