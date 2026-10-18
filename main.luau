@@ -4,18 +4,19 @@
 local Config = {
     ForceDay = false,       -- force daytime lighting (ClockTime = 14)
     autofarm = false,       -- auto quest + farm mobs by level stage
-    travelToIsland = "Magma Village",   -- auto-travel once on load. Options:
+    travelToIsland = nil,   -- auto-travel once on load. Options:
                             --   "Marine Starter", "Pirate Starter", "Jungle", "Pirate Village",
                             --   "Desert", "Frozen Island", "Marine Fortress", "Skylands",
                             --   "Prison", "Colosseum", "Magma Village", "Underwater City",
                             --   "Upper Sky Gods guards", "Upper Sky Island 1",
                             --   "Upper Sky Island 2", "Fountain City"
     SetVisualBeli = nil,    -- number to spoof Beli, or nil for no change
-    SetVisualFragments = 100000, -- number to spoof Fragments, or nil
+    SetVisualFragments = nil, -- number to spoof Fragments, or nil
     SetVisualLevel = nil,   -- number to spoof Level, or nil
     SetVisualStats = nil,   -- number to spoof Points, or nil
-    enableESP = true,      -- player ESP (name + level + distance + highlight)
+    enableESP = false,      -- player ESP (name + level + distance + highlight)
     autobounty = false,     -- auto hunt nearest player within 20% level range
+    killaura = false,       -- kill nearest enemy in workspace each tick
 }
 
 -- Shared tunables (same defaults each module used originally)
@@ -1341,6 +1342,33 @@ if Config.autobounty then
                 end)
             end
         end)
+    end)
+end
+
+-- ============================== KillAura ==============================
+if Config.killaura then
+    _G.killaura = true
+    task.spawn(function()
+        while _G.killaura and HubAlive() do task.wait()
+            pcall(function()
+                local dist = math.huge
+                local target = nil
+                for i,v in pairs(game:GetService("Workspace").Enemies:GetChildren()) do
+                    if v.ClassName == "Model" then
+                        local magnitude = (v.HumanoidRootPart.Position - game:GetService("Players").LocalPlayer.Character.Head.Position).magnitude
+                        if magnitude < dist then
+                            dist = magnitude
+                            target = v.Name
+                            v.Humanoid.Health =  die
+                            print(target)
+                        end
+                    end
+                end
+            end)
+        end
+    end)
+    Hub:OnStop(function()
+        _G.killaura = false
     end)
 end
 
